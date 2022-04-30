@@ -1,49 +1,50 @@
 import { StatusBar } from 'expo-status-bar';
-import {Image, StyleSheet, Text, View } from 'react-native';
+import { useState, useEffect } from 'react';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Stock from './components/Stock.tsx';
-import warehouse from './assets/warehouse.jpg';
+import { Base, Typography } from '../styles';
+import Home from "./components/Home.tsx";
+import Pick from "./components/Pick.tsx";
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Ionicons } from '@expo/vector-icons';
 
+const Tab = createBottomTabNavigator();
+const routeIcons = {
+  "Lager": "home",
+  "Plock": "list",
+};
 export default function App() {
+    const [products, setProducts] = useState([]);
+
   return (
-      <SafeAreaView style={styles.container}>
-          <View style={styles.bass}>
-            <Text style={styles.title}>Lager-Appen</Text>
-            <Image source={warehouse} style={{ width: 340, height: 240 }} />
-            <Stock />
-            <StatusBar style="auto" />
-          </View>
-      </SafeAreaView>
+    <SafeAreaView style={styles.container}>
+      <NavigationContainer>
+          <Tab.Navigator screenOptions={({ route }) => ({
+                  tabBarIcon: ({ focused, color, size }) => {
+                        let iconName = routeIcons[route.name] || "alert";
+
+                        return <Ionicons name={iconName} size={size} color={color} />;
+                  },
+                  tabBarActiveTintColor: 'blue',
+                  tabBarInactiveTintColor: 'gray',
+                })}
+            >
+                <Tab.Screen name="Lager">
+                    {(props) => <Home products={products} setProducts={setProducts} />}
+                </Tab.Screen>
+                <Tab.Screen name="Plock">
+                    {() => <Pick setProducts={setProducts} />}
+                </Tab.Screen>
+            </Tab.Navigator>
+      </NavigationContainer>
+      <StatusBar style="auto" />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: "column",
-    padding: 20,
-    backgroundColor: '#eaeaea',
-    alignItems: 'center', justifyContent: 'center'
-  },
-
-  base: {
-    flex: 1,
-    backgroundColor: '#fff',
-    flexDirection: "column",
-    paddingLeft: 12,
-    paddingRight: 12,
-},
-title: {
-    marginTop: 1,
-    padding: 5,
-    borderWidth: 4,
-    borderColor: '#20232a',
-    borderRadius: 6,
-    backgroundColor: '#61dafb',
-    color: '#20232a',
-    textAlign: 'center',
-    fontSize: 30,
-    fontWeight: 'bold',
-    bottom: 10,
   },
 });
